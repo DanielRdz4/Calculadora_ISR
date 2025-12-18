@@ -10,3 +10,6 @@ __pycache__/
 
 # Archivos de entorno
 .env
+
+# Datos locales del usuario
+data/
