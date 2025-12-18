@@ -15,28 +15,56 @@ def get_tax_regime(msg):
             return tax_regime
         print("Respuesta inválida, intente de nuevo")
 
-def get_monthly_income(msg:str) -> int:
+def get_float(msg:str) -> float:
     """Safetely converts user input form stringo to int"""
     while True:
         try:
-            return int(input(msg))
+            return float(input(msg))
         except ValueError:
             print("Respuesta inválida, intente de nuevo")
 
 
 def get_user_pref():
     """Stores user's preferences"""
-    tax_regime= get_tax_regime("Régimen fiscal actual: R = RESICO, S= Sueldos y salarios, A = Actividades empresariales")
-    monthly_income = int(input("Ingreso mensual (sin centavos): "))
+    tax_regime= get_tax_regime("Régimen fiscal actual |R = RESICO, S= Sueldos y salarios, A = Actividades empresariales|: ")
+    monthly_income = get_float("Ingreso mensual $MXN: ")
+    deductibles = get_float("Total en deduciones $MXN: ")
 
     user_pref = {
         'tax_regime': tax_regime,
-        'monthly_income': monthly_income
+        'monthly_income': monthly_income,
+        'deductibles': deductibles,
     }
     return user_pref
 
 def save_preferences(user_pref):
     """Makes json file with user preferences"""
-    
-    with user_pref_path.open( "w", encoding="utf-8") as f:
+
+    DATA_DIR.mkdir(parents=True ,exist_ok=True) #Ensures that local 'data' dir exists
+    with user_pref_path.open("w", encoding="utf-8") as f:
         json.dump(user_pref, f, indent= 4)
+
+def load_preferences():
+    """Loads user preferences for accesing data"""
+    with user_pref_path.open("r",encoding="utf-8") as f:
+        return json.load(f)
+
+def fetch_user_pref():
+    """Looks for existing user preferences"""
+    if user_pref_path.is_file():
+       
+        while True:
+            keep_delete = input("¿Desea utulizar las preferencias existentes? (S/N): ").strip().upper()
+            if keep_delete == 'S':
+                return load_preferences()
+
+            elif keep_delete == 'N':
+                user_pref_path.unlink()
+                user_pref=get_user_pref()
+                return user_pref
+            
+            else:
+                print("Valor inválido, intente de nuevo")
+
+    #If the file does not exist
+    return get_user_pref()
