@@ -1,8 +1,10 @@
-#Store user preferences
-
+#User preferences management functions
 import json
+from pathlib import Path
+from utils.paths import DATA_DIR
+filename = "user_data.json"
+user_pref_path = DATA_DIR / filename
 
-filename = "user_pref.json"
 
 def get_tax_regime(msg):
     """Safely obtains user's tax regime"""
@@ -32,3 +34,9 @@ def get_user_pref():
         'monthly_income': monthly_income
     }
     return user_pref
+
+def save_preferences(user_pref):
+    """Makes json file with user preferences"""
+    
+    with user_pref_path.open( "w", encoding="utf-8") as f:
+        json.dump(user_pref, f, indent= 4)
