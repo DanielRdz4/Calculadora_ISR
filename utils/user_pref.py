@@ -4,6 +4,8 @@ from pathlib import Path
 from utils.paths import DATA_DIR
 filename = "user_data.json"
 user_pref_path = DATA_DIR / filename
+UMA = 41_273.52
+UMA_limit = 5 * UMA
 
 
 def get_tax_regime(msg):
@@ -23,18 +25,42 @@ def get_float(msg:str) -> float:
         except ValueError:
             print("Respuesta inválida, intente de nuevo")
 
+def get_deductions(monthly_income,msg: str) -> float:
+    """Ensures that total deductions are coherent with income"""
 
+    while True:
+        try:
+             deductions = float(input(msg))
+
+             if deductions > monthly_income:
+                 print("Las deducciones no pueden superar los ingresos, intente de nuevo")
+             elif deductions > UMA_limit:
+                 print(
+                     f"Las deducciones no pueden superar 5 UMAS: ({UMA_limit:,.2f}), intente de nuevo"
+                 )
+             else:
+                return deductions
+        
+        except ValueError:
+            print("Respuesta inválida, intente de nuevo")
+    
 def get_user_pref():
     """Stores user's preferences"""
-    tax_regime= get_tax_regime("Régimen fiscal actual |R = RESICO, S= Sueldos y salarios, A = Actividades empresariales|: ")
-    monthly_income = get_float("Ingreso mensual $MXN: ")
-    deductibles = get_float("Total en deduciones $MXN: ")
 
+    
+    tax_regime= get_tax_regime("Régimen fiscal actual |R = RESICO, S= Sueldos y salarios, A = Actividades empresariales|: ")
     user_pref = {
-        'tax_regime': tax_regime,
-        'monthly_income': monthly_income,
-        'deductibles': deductibles,
-    }
+            'tax_regime': tax_regime,
+            'monthly_income': 0.0,
+            'deductions': 0.0,
+            }
+    user_pref["monthly_income"]=get_float("Ingreso total mensual (MXN): ")
+
+    if tax_regime != 'R':
+        user_pref["deductions"] = get_deductions(user_pref["monthly_income"],"Deducciones totales del mes (MXN): ")
+
+
+    save_preferences(user_pref)
     return user_pref
 
 def save_preferences(user_pref):

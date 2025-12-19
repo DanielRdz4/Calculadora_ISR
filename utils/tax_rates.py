@@ -1,8 +1,8 @@
 #tax rates for different fiscal status
 # R= RESICO, S= Sueldos y salarios, A = Actividades empresariales
 
-asalariado_rates = [
-    #[límite_inferior, límite_superior, cuota_fija, porcentaje]
+tax_rates = [
+    #[límite_inferior, límite_superior, cuota_fija, tasa]
     [0.01, 746.04, 0.00, 1.92],
     [746.05, 6332.05, 14.32, 6.40],
     [6332.06, 11128.01, 371.83, 10.88],
@@ -16,11 +16,13 @@ asalariado_rates = [
     [375975.62, float("inf"), 117912.32, 35.00],
 ]
 
-empresarial_rates =[
-
-]
-
 RESICO_rates =[
-    
+    #[límite_inferior, límite_superior, tasa]
+    [0.01, 300_000, 1],
+    [300_001, 600_000, 1.1],
+    [600_001, 1_000_000, 1.5],
+    [1_000_001, 2_500_000, 2],
+    [2_500_001, 3_500_000, 2.5],
 ]
+
 
